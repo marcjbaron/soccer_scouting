@@ -1,0 +1,30 @@
+Professional Soccer Player Roles Project - Installation Set-up
+
+------------------------------------------------------------------------------
+Step 1 - Create New Virtual Environment
+------------------------------------------------------------------------------
+1) Using Virtual Environment Package
+python -m venv footy_roles_env
+
+2) Using AnaConda through Git Bash
+conda create -n footy_roles_env python=??????
+
+------------------------------------------------------------------------------
+Step 2 - Activate Environment
+------------------------------------------------------------------------------ 
+# Windows  == .\footy_roles_env\Scripts\activate
+# Linux    == source footy_roles_env/bin/activate
+# Git Bash == conda activate footy_roles_env
+
+------------------------------------------------------------------------------
+Step 3 - Install Dependencies & Add Virtual Environment to Python Kernel
+------------------------------------------------------------------------------
+python -m pip install --upgrade pip
+pip install --user ipykernel
+python -m ipykernel install --user --name=footy_roles_env
+pip install --user -r requirements.txt
+
+------------------------------------------------------------------------------
+Step 4 - To Remove/Disconnect Virtual Environment from Jupyter if Needed
+------------------------------------------------------------------------------
+# Git bash == jupyter kernelspec uninstall footy_roles_env
