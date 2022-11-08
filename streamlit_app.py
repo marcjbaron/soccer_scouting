@@ -21,7 +21,8 @@ with row0_2:
 st.markdown("Over the past 10 years, the analysis of soccer analytics has seen a rapid growth in interest as ever-increasing amounts of data is collected.\
     Today, there are several data companies and professional teams collecting increasingly fine-grained statistics on every match played.") 
 st.markdown(" This page attempts to use some of those statistics to group together players with statistically similar play styles.\
-    Keep scrolling to get into the details, or use the sidebar to choose a player from one of 10 different leagues to get a list of 10 players who play in a similar style.")
+    Keep scrolling to get into the details, or use the sidebar to choose a player from one of 10 different leagues to get a list of players who play in a similar style \
+        to your chosen player.")
 
 #################
 ### SELECTION ###
@@ -150,8 +151,11 @@ st.header(f'{player_selection} Player Profile')
 if selectbox_submitted:
     display, cluster = selectbox_similar_players(player_selection, df_player, neighbors, team_selection)
 else:
-    display, cluster = textbox_similar_players(player_selection, df_player, neighbors )
-
+    try:
+        display, cluster = textbox_similar_players(player_selection, df_player, neighbors )
+    except IndexError:
+        st.error("Please enter a valid player (Check spelling or special characters in the player's name, and make sure there are no spaces!")
+        st.stop()
 if (cluster == 1):
     st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
     st.markdown(" Traditional forwards, and the least common role; dangerous finishers close to goal, but tend to contribute mainly at the end of chains of possession, either \
