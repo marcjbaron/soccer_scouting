@@ -27,9 +27,9 @@ st.markdown(" This page attempts to use some of those statistics to group togeth
 #################
 ### SELECTION ###
 #################
-df_player = pd.read_csv("../data/processed/display_player_data.csv")
+df_player = pd.read_csv("data/processed/display_player_data.csv")
 df_player.drop(columns=["Unnamed: 0"], inplace=True)
-neighbors = pd.read_csv("../data/processed/nearest_neighbors.csv")
+neighbors = pd.read_csv("data/processed/nearest_neighbors.csv")
 
 
 def get_unique_leagues(df):
