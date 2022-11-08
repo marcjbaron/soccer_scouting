@@ -18,7 +18,7 @@ with row0_2:
     st.markdown('Streamlit App by [Marc Baron](https://www.linkedin.com/in/marc-j-baron/)')
 # row3_spacer1, row3_1, row3_spacer2 = st.columns((.1, 3.2, .1))
 # with row3_1:
-st.markdown("Over the past 10 years, as more and more data is collectedsoccer has seen a rapid growth in interest.\
+st.markdown("Over the past 10 years, the analysis of soccer analytics has seen a rapid growth in interest as ever-increasing amounts of data is collected.\
     Today, there are several data companies and professional teams collecting increasingly fine-grained statistics on every match played.") 
 st.markdown(" This page attempts to use some of those statistics to group together players with statistically similar play styles.\
     Keep scrolling to get into the details, or just use the sidebar to choose a player and get a list of 10 players who play in a similar style.")
@@ -27,9 +27,9 @@ st.markdown(" This page attempts to use some of those statistics to group togeth
 #################
 ### SELECTION ###
 #################
-df_player = pd.read_csv("../data/processed/display_player_data.csv")
+df_player = pd.read_csv("data/processed/display_player_data.csv")
 df_player.drop(columns=["Unnamed: 0"], inplace=True)
-neighbors = pd.read_csv("../data/processed/nearest_neighbors.csv")
+neighbors = pd.read_csv("data/processed/nearest_neighbors.csv")
 
 
 def get_unique_leagues(df):
@@ -38,6 +38,13 @@ def get_unique_teams(df, league ):
     return np.unique(df[df.League == league].Squad).tolist()
 def get_unique_player(df, team):
     return np.unique(df[df.Squad == team].Player).tolist()
+
+def filter_leagues(df_data):
+    df_filtered_team = pd.DataFrame()
+    if all_leagues_selected == 'Select leagues manually (choose below)':
+        df_filtered_team = df_data[df_data['League'].isin(selected_leagues)]
+        return df_filtered_team
+    return df_data
 
 def selectbox_similar_players(player_selection, player_data, neighbor_data, team):
     idx = player_data[(player_data['Player'] == player_selection) & (player_data['Squad'] == team)].index[0]
@@ -86,9 +93,18 @@ st.sidebar.text('')
 ##Sidebar options
 
 # League selection
-with st.form(key='selectbox_form'):
+###  Selecting leagues
+with st.form(key='selectbox_league'):
     with st.sidebar:
         unique_leagues = get_unique_leagues(df_player)
+        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, please check the box below and then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
+        if (all_leagues_selected == 'Select leagues manually (choose below)'):
+            selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can clear the current selection by clicking the corresponding x-button on the right", unique_leagues, default = unique_leagues)
+        df_data_filtered = filter_leagues(df_player)   
+
+with st.form(key='selectbox_form'):
+    with st.sidebar:
+        unique_leagues = get_unique_leagues(df_data_filtered)
         prompts = [["Select a league"], ["Select a team"], ["Select a player"]]
         prompts[0].extend(unique_leagues)
         league_selection = st.sidebar.selectbox('Use the options below to select your desired player. At the moment, only the 2021-2022 season is included.', prompts[0])
@@ -120,7 +136,7 @@ with st.form(key='text_form', clear_on_submit=False):
         submitted = st.form_submit_button("Submit" )
         # st.session_state.player = player_selection_text
 
-################
+###############
 ### ANALYSIS ###
 ################
 
@@ -188,7 +204,7 @@ st.markdown("**onxGA**: A measure of the quality of the opposing team's goal-sco
         # not playing.")
 # Define player types
 
-action_map = Image.open(f"../reports/figures/cluster_{cluster}_action_profile.png")
+action_map = Image.open(f"reports/figures/cluster_{cluster}_action_profile.png")
 st.image(action_map )
 
 st.header('All Player Type Profiles')
