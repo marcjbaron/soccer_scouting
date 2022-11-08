@@ -14,7 +14,7 @@ row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.01, 2.3,
 with row0_1:
     st.title('Identifying Professional Soccer Player Profiles')
 with row0_2:
-    st.markdown("You can find the source code in the [GitHub Repository](https://github.com/marcjbaron/soccer-scounting)")
+    st.markdown("You can find the source code in the [GitHub Repository](https://github.com/marcjbaron/soccer_scouting)")
     st.markdown('Streamlit App by [Marc Baron](https://www.linkedin.com/in/marc-j-baron/)')
 # row3_spacer1, row3_1, row3_spacer2 = st.columns((.1, 3.2, .1))
 # with row3_1:
