@@ -12,14 +12,14 @@ st.set_page_config(layout="wide")
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.01, 2.3, .1, 1.3, .1))
 with row0_1:
-    st.title('Identifying Professional Soccer Player Profiles')
+    st.title('Identifying Professional Soccer Player Styles')
 with row0_2:
     st.markdown("You can find the source code in the [GitHub Repository](https://github.com/marcjbaron/soccer_scouting)")
     st.markdown('Streamlit App by [Marc Baron](https://www.linkedin.com/in/marc-j-baron/)')
 # row3_spacer1, row3_1, row3_spacer2 = st.columns((.1, 3.2, .1))
 # with row3_1:
 st.markdown("Over the past 10 years, the analysis of soccer analytics has seen a rapid growth in interest as ever-increasing amounts of data is collected.\
-    Today, there are several data companies and professional teams collecting increasingly fine-grained statistics on every match played.") 
+    Today, there are several data companies and professional teams in-house analysts collecting increasingly fine-grained statistics on every match played.") 
 st.markdown(" This page attempts to use some of those statistics to group together players with statistically similar play styles.\
     Keep scrolling to get into the details, or use the sidebar to choose a player from one of 10 different leagues to get a list of players who play in a similar style \
         to your chosen player.")
@@ -70,10 +70,10 @@ def find_cluster_size(df, cluster):
 
 # Display a random player in the text box as an example
 # Check if session state object exists
-if "random_player" not in st.session_state:
-    st.session_state["random_player"] = df_player.Player.sample().values[0]
-elif "random_player" not in st.session_state:
-    st.session_state["random_player"] = st.session_state["random_player"] 
+if "player" not in st.session_state:
+    st.session_state["player"] = df_player.Player.sample().values[0]
+# elif "random_player" not in st.session_state:
+    # st.session_state["random_player"] = st.session_state["random_player"] 
 
 # def player_callback():
 #     st.session_state["prev_random_player"] = st.session_state["random_player"]
@@ -97,9 +97,11 @@ st.sidebar.text('')
 with st.form(key='selectbox_league'):
     with st.sidebar:
         unique_leagues = get_unique_leagues(df_player)
-        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, please check the box below and then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
+        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, please check the box below and \
+            then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
         if (all_leagues_selected == 'Select leagues manually (choose below)'):
-            selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can clear the current selection by clicking the corresponding x-button on the right", unique_leagues, default = unique_leagues)
+            selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can \
+                clear the current selection by clicking the corresponding x-button on the right", unique_leagues, default = unique_leagues)
         df_data_filtered = filter_leagues(df_player)   
 
 with st.form(key='selectbox_form'):
@@ -107,7 +109,8 @@ with st.form(key='selectbox_form'):
         unique_leagues = get_unique_leagues(df_data_filtered)
         prompts = [["Select a league"], ["Select a team"], ["Select a player"]]
         prompts[0].extend(unique_leagues)
-        league_selection = st.sidebar.selectbox('Use the options below to select your desired player. At the moment, only the 2021-2022 season is included.', prompts[0])
+        league_selection = st.sidebar.selectbox('Use the options below to select your desired player. At the moment, only the 2021-2022 season \
+            is included.', prompts[0])
         
         #...and team selection 
         unique_teams = get_unique_teams(df_player, league_selection)
@@ -117,8 +120,11 @@ with st.form(key='selectbox_form'):
         #...and player selection 
         unique_player = get_unique_player(df_player, team_selection)
         prompts[2].extend(unique_player)
-        player_selection_selectbox = st.sidebar.selectbox("Select a player", options = prompts[2] )
+        player_selection_selectbox = st.sidebar.selectbox("Select a player (Players must have played at least 20% of available minutes to \
+            be eligible)", options = prompts[2] )
         selectbox_submitted = st.form_submit_button("Submit" )
+        if selectbox_submitted:
+            st.session_state.player = player_selection_selectbox
 
 # Reset everything after player selection?
 
@@ -128,25 +134,22 @@ with st.form(key='selectbox_form'):
 with st.form(key='text_form', clear_on_submit=False):
     with st.sidebar:
         player_selection_text = st.sidebar.text_input('Or type the name of a player below. We\'ve randomly selected a player so you can\
-             see how it works. If a player played for multiple teams in that season, only one of the teams will listed', value = st.session_state.random_player) 
+             see how it works. If a player played for multiple teams in that season, only one of the teams will listed', value = st.session_state.player) 
         
         # def new_random_player(df):
             # st.session_state["random_player"] = df.Player.sample().values[0]
             # return 
-        submitted = st.form_submit_button("Submit" )
-        # st.session_state.player = player_selection_text
+        textform_submitted = st.form_submit_button("Submit" )
+        if textform_submitted:
+            st.session_state.player = player_selection_text
 
 ###############
 ### ANALYSIS ###
 ################
 
-if selectbox_submitted:
-    player_selection = player_selection_selectbox
-else:
-    player_selection = player_selection_text
+player_selection = st.session_state.player
 
 st.header(f'{player_selection} Player Profile')
-
 
 if selectbox_submitted:
     display, cluster = selectbox_similar_players(player_selection, df_player, neighbors, team_selection)
@@ -154,7 +157,7 @@ else:
     try:
         display, cluster = textbox_similar_players(player_selection, df_player, neighbors )
     except IndexError:
-        st.error("Please enter a valid player (Check spelling or special characters in the player's name, and make sure there are no spaces!")
+        st.error("Please enter a valid player; check the spelling or for special characters in the player's name, and make sure there are no spaces!")
         st.stop()
 if (cluster == 1):
     st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
@@ -179,6 +182,7 @@ if (cluster == 5):
     They hard to dispossess and who will win most balls on the ground and in the air.")
 
 st.header('Similar Players')
+st.markdown("The chosen player will be listed first, followed by the most statistically similar players.")
 st.table(display.style.format({'Minutes\nPlayed (%)': "{:.1f}", 'onxG': "{:.2f}", 'onxGA': "{:.2f}"}))
 st.markdown("*Table Legend*")
 st.markdown("**Pos** (player positions): FW - Forward; MF - Midfielder; DF - Defender (no goalkeepers here; sorry keepers!)")
@@ -191,34 +195,19 @@ st.markdown("**onxGA**: A measure of the quality of the opposing team's goal-sco
     the opposing team has better goal-scoring chances when the player is playing; a score below *1.00* implies better goal-scoring chances when the player is \
         not playing.")
 
-col1, col2, col3 = st.columns([1.5,6,1])
-with col1:
-    st.write("")
-with col2:
-    action_map = Image.open(f"reports/figures/cluster_{cluster}_action_profile.png")
-    st.image(action_map )
-with col3:
-    st.write("")
+# Showing bar plot of percentiles (comment out for now)
+# col1, col2, col3 = st.columns([1.5,6,1])
+# with col1:
+#     st.write("")
+# with col2:
+#     action_map = Image.open(f"reports/figures/cluster_{cluster}_action_profile.png")
+#     st.image(action_map )
+# with col3:
+#     st.write("")
 
 st.header('All Player Type Profiles')
 
 st.subheader('Details of the Player Styles')
-st.markdown('The play styles were determined by taking around 70 event-based statistical actions collected by [StatsBomb](https://statsbomb.com/what-we-do/soccer-data/), and reducing those actions to a 2-dimensional\
-    graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
-    clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). The resulting graph, along \
-    with an interpretation of the axes, is shown below.')
-st.markdown("\'*Position*' is the position on the pitch where most of that player's actions take place. \'*Skill in possession*\' is how good they are with the ball at their feet, \
-    whether passing or holding on to the ball.")
-
-col1, col2, col3 = st.columns([1,6,1])
-with col1:
-    st.write("")
-with col2:
-    cluster_map = Image.open("reports/figures/cluster_map_opta_annotated.png")
-    st.image(cluster_map )
-with col3:
-    st.write("")
-
 st.subheader(f'Cluster 1 - {find_cluster_size(df_player, 1):.1f}% of players')
 st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
 st.markdown(" Traditional forwards, and the least common role; dangerous finishers close to goal, but tend to contribute mainly at the end of chains of possession, either \
@@ -241,3 +230,19 @@ st.markdown("*Exemplars:Virgil van Dijk (Liverpool),  Matthijs de Ligt (Juventus
 st.markdown("Traditional centre-backs. More likely to possess the ball in their own 3rd of the pitch, and therefore more likely to make accurate, longer passes (*i.e.* greater than 10 yards). \
       They hard to dispossess and who will win most balls on the ground and in the air.")
 
+st.subheader('Details of the Methodology')
+st.markdown('The play styles were determined by taking around 50 event-based statistical actions collected by [Opta](https://statsbomb.com/what-we-do/soccer-data/), and reducing those actions to a 2-dimensional\
+    graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
+    clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). The resulting graph, along \
+    with an interpretation of the axes, is shown below.')
+st.markdown("\'*Position*' is the position on the pitch where most of that player's actions take place. \'*Skill in possession*\' is how good they are with the ball at their feet, \
+    whether passing or holding on to the ball.")
+
+col1, col2, col3 = st.columns([1,6,1])
+with col1:
+    st.write("")
+with col2:
+    cluster_map = Image.open("reports/figures/cluster_map_opta_annotated.png")
+    st.image(cluster_map )
+with col3:
+    st.write("")
