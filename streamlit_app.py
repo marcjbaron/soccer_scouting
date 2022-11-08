@@ -1,16 +1,11 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-import pickle
-import time
 import matplotlib.pyplot  as plt
-from  matplotlib.ticker import FuncFormatter
-import seaborn as sns
 from PIL import Image
 
 
 # Add error-handling (if any error, just say there's an error, then display random player)
-# If search for Bernedeschi in textbox, it gives him role from Juventus (need to properly identify cluster)
 
 st.set_page_config(layout="wide")
 
