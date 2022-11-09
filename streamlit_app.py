@@ -21,8 +21,8 @@ with row0_2:
 st.markdown("Over the past 10 years, the analysis of soccer analytics has seen a rapid growth in interest as ever-increasing amounts of data is collected.\
     Today, there are several data companies and professional teams in-house analysts collecting increasingly fine-grained statistics on every match played.") 
 st.markdown(" This page attempts to use some of those statistics to group together players with statistically similar play styles.\
-    Keep scrolling to get into the details, or use the sidebar to choose a player from one of 10 different leagues to get a list of players who play in a similar style \
-        to your chosen player.")
+    Use the sidebar to choose a player from one of 10 different leagues, and see a list of players who play in a similar style to the chosen player.")
+st.markdown(" To see all the player styles and how the styles were determined, go to the bottom of the page.")
 
 #################
 ### SELECTION ###
@@ -97,7 +97,7 @@ st.sidebar.text('')
 with st.form(key='selectbox_league'):
     with st.sidebar:
         unique_leagues = get_unique_leagues(df_player)
-        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, please check the box below and \
+        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, check the box below and \
             then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
         if (all_leagues_selected == 'Select leagues manually (choose below)'):
             selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can \
@@ -109,7 +109,7 @@ with st.form(key='selectbox_form'):
         unique_leagues = get_unique_leagues(df_data_filtered)
         prompts = [["Select a league"], ["Select a team"], ["Select a player"]]
         prompts[0].extend(unique_leagues)
-        league_selection = st.sidebar.selectbox('Use the options below to select your desired player. At the moment, only the 2021-2022 season \
+        league_selection = st.sidebar.selectbox('To choose a player, use the options below to select a league, team and then player. At the moment, only the 2021-2022 season \
             is included.', prompts[0])
         
         #...and team selection 
@@ -149,7 +149,7 @@ with st.form(key='text_form', clear_on_submit=False):
 
 player_selection = st.session_state.player
 
-st.header(f'{player_selection} Player Profile')
+st.header(f'Player Profile for {player_selection}')
 
 if selectbox_submitted:
     display, cluster = selectbox_similar_players(player_selection, df_player, neighbors, team_selection)
@@ -160,38 +160,43 @@ else:
         st.error("Please enter a valid player; check the spelling or for special characters in the player's name, and make sure there are no spaces!")
         st.stop()
 if (cluster == 1):
+    st.subheader(f'Cluster 1 - {find_cluster_size(df_player, 1):.1f}% of players')
     st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
     st.markdown(" Traditional forwards, and the least common role; dangerous finishers close to goal, but tend to contribute mainly at the end of chains of possession, either \
     through their dangerous shooting or by turning the ball over. More effective dribblers, and are thus more likely to be fouled in dangerous areas. Don't touch or pass the ball much, relative to \
     their teammates.")
 if (cluster == 2):
+    st.subheader(f'Cluster 2 - {find_cluster_size(df_player, 2):.1f}% of players')
     st.markdown("*Exemplars: Lorenzo Insigne (Napoli), Kevin De Bruyne (Manchester City), Kylian Mbappé (Paris S-G), Thomas Müller (Bayern Munich),  Alejandro Pozuelo (Inter Miami)*")
     st.markdown("Traditional attacking midfielders and wingers; this player is adept at creating goal-scoring opportunities, either by dribbling or passing into the opposing team's penalty area. \
         They tend to play shorter passes (perhaps because they are mostly found in the final third), and do not contribute as much defensively.")
 if (cluster == 3):
-    st.markdown("*Exemplars: Raphina (Leeds United), Luka Modrić (Real Madrid), Sergio Busquets (Barcelona), Joshua Kimmich (Bayern Munich), Marten de Roon (Atalanta) * ")
+    st.subheader(f'Cluster 3 - {find_cluster_size(df_player, 3):.1f}% of players')
+    st.markdown("*Exemplars: Raphina (Leeds United), Luka Modrić (Real Madrid), Sergio Busquets (Barcelona), Joshua Kimmich (Bayern Munich), Marten de Roon (Atalanta)* ")
     st.markdown("This player tends to control the midfield, both offensively and defensively. They possess the ball more than any other \
     player profile, and are accurate passers. They are skilled at dispossessing opposing players, mostly in the midfield. ")
 if (cluster == 4):
+    st.subheader(f'Cluster 4 - {find_cluster_size(df_player, 4):.1f}% of players')
     st.markdown("*Exemplars: Alphonso Davies (Bayern Munich), Trent Alexander-Arnold (Liverpool), João Cancelo (Manchester City), Kai Wagner (Philadelphia Union)*")
     st.markdown("Traditional fullbacks and wide midfielders. Players who look to make long, progressive passes from deep or central areas. Also effective at dispossessing players in the \
     defensive third. Much more likely to take throw-ins, confirming the wider roles they play.")
 if (cluster == 5):
-    st.markdown("*Exemplars:Virgil van Dijk (Liverpool),  Matthijs de Ligt (Juventus), Lewis Dunk (Brighton), Pau Torres (Villareal), Gerard Piqué (Barcelona)*") 
+    st.subheader(f'Cluster 5 - {find_cluster_size(df_player, 5):.1f}% of players')
+    st.markdown("*Exemplars: Virgil van Dijk (Liverpool),  Matthijs de Ligt (Juventus), Lewis Dunk (Brighton), Pau Torres (Villareal), Gerard Piqué (Barcelona)*") 
     st.markdown("Traditional centre-backs. More likely to possess the ball in their own 3rd of the pitch, and therefore more likely to make accurate, longer passes (*i.e.* greater than 10 yards). \
-    They hard to dispossess and who will win most balls on the ground and in the air.")
+    They are hard to dispossess and will win most balls on the ground and in the air.")
 
-st.header('Similar Players')
+st.header(f'Similar Players to {player_selection}')
 st.markdown("The chosen player will be listed first, followed by the most statistically similar players.")
 st.table(display.style.format({'Minutes\nPlayed (%)': "{:.1f}", 'onxG': "{:.2f}", 'onxGA': "{:.2f}"}))
 st.markdown("*Table Legend*")
-st.markdown("**Pos** (player positions): FW - Forward; MF - Midfielder; DF - Defender (no goalkeepers here; sorry keepers!)")
-st.markdown("**Player Type**: Cluster the player is part of; see next section for details")
-st.markdown("**Min Pld (%)**: What proportion of the team's minutes that player played. 100% would mean they played every minute of every game")
-st.markdown("**onxG**: A measure of the quality of a team's goal-scoring chances when that player is on the pitch. A score above *1.00* implies \
+st.caption("**Pos** (player positions): FW - Forward; MF - Midfielder; DF - Defender (no goalkeepers here; sorry keepers!)")
+st.caption("**Player Type**: Cluster the player is part of; see next section for details")
+st.caption("**Minutes Played (%)**: What proportion of the team's minutes that player played. 100% would mean they played every minute of every game")
+st.caption("**onxG**: A measure of the quality of a team's goal-scoring chances when that player is on the pitch. A score above *1.00* implies \
     the team has better goal-scoring chances when the player is playing; a score below *1.00* implies better goal-scoring chances when the player is \
         not playing.")
-st.markdown("**onxGA**: A measure of the quality of the opposing team's goal-scoring chances when that player is on the pitch. A score above *1.00* implies \
+st.caption("**onxGA**: A measure of the quality of the opposing team's goal-scoring chances when that player is on the pitch. A score above *1.00* implies \
     the opposing team has better goal-scoring chances when the player is playing; a score below *1.00* implies better goal-scoring chances when the player is \
         not playing.")
 
@@ -205,44 +210,50 @@ st.markdown("**onxGA**: A measure of the quality of the opposing team's goal-sco
 # with col3:
 #     st.write("")
 
-st.header('All Player Type Profiles')
+with st.form(key='allclusters_form'):
+        prompts = ["Hide all player profiles and methodology", "Show all player profiles and methodology"]
+        general_selection = st.selectbox('All player profles and methodology', prompts)
+        all_selectbox_submitted = st.form_submit_button("Submit" )
 
-st.subheader('Details of the Player Styles')
-st.subheader(f'Cluster 1 - {find_cluster_size(df_player, 1):.1f}% of players')
-st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
-st.markdown(" Traditional forwards, and the least common role; dangerous finishers close to goal, but tend to contribute mainly at the end of chains of possession, either \
- through their dangerous shooting or by turning the ball over. More effective dribblers, and are thus more likely to be fouled in dangerous areas. Don't touch or pass the ball much, relative to \
-    their teammates.")
-st.subheader(f'Cluster 2- {find_cluster_size(df_player, 2):.1f}% of players')
-st.markdown("*Exemplars: Lorenzo Insigne (Napoli), Kevin De Bruyne (Manchester City), Kylian Mbappé (Paris S-G), Thomas Müller (Bayern Munich),  Alejandro Pozuelo (Inter Miami)*")
-st.markdown("Traditional attacking midfielders and wingers; this player is adept at creating goal-scoring opportunities, either by dribbling or passing into the opposing team's penalty area. \
-    They tend to play shorter passes (perhaps because they are mostly found in the final third), and do not contribute as much defensively.")
-st.subheader(f'Cluster 3- {find_cluster_size(df_player, 3):.1f}% of players')
-st.markdown("*Exemplars: Raphina (Leeds United), Luka Modrić (Real Madrid), Sergio Busquets (Barcelona), Joshua Kimmich (Bayern Munich), Marten de Roon (Atalanta) * ")
-st.markdown("This player tends to control the midfield, both offensively and defensively. They possess the ball more than any other \
-player profile, and are accurate passers. They are skilled at dispossessing opposing players, mostly in the midfield. ")
-st.subheader(f'Cluster 4- {find_cluster_size(df_player, 4):.1f}% of players')
-st.markdown("*Exemplars: Alphonso Davies (Bayern Munich), Trent Alexander-Arnold (Liverpool), João Cancelo (Manchester City), Kai Wagner (Philadelphia Union)*")
-st.markdown("Traditional fullbacks and wide midfielders. Players who look to make long, progressive passes from deep or central areas. Also effective at dispossessing players in the \
-defensive third. Much more likely to take throw-ins, confirming the wider roles they play.")
-st.subheader(f'Cluster 5- {find_cluster_size(df_player, 5):.1f}% of players')
-st.markdown("*Exemplars:Virgil van Dijk (Liverpool),  Matthijs de Ligt (Juventus), Lewis Dunk (Brighton), Pau Torres (Villareal), Gerard Piqué (Barcelona)*") 
-st.markdown("Traditional centre-backs. More likely to possess the ball in their own 3rd of the pitch, and therefore more likely to make accurate, longer passes (*i.e.* greater than 10 yards). \
-      They hard to dispossess and who will win most balls on the ground and in the air.")
+if all_selectbox_submitted:
+    st.header('All Player Type Profiles')
 
-st.subheader('Details of the Methodology')
-st.markdown('The play styles were determined by taking around 50 event-based statistical actions collected by [Opta](https://statsbomb.com/what-we-do/soccer-data/), and reducing those actions to a 2-dimensional\
-    graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
-    clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). The resulting graph, along \
-    with an interpretation of the axes, is shown below.')
-st.markdown("\'*Position*' is the position on the pitch where most of that player's actions take place. \'*Skill in possession*\' is how good they are with the ball at their feet, \
-    whether passing or holding on to the ball.")
+    st.subheader('Details of the Player Styles')
+    st.subheader(f'Cluster 1 - {find_cluster_size(df_player, 1):.1f}% of players')
+    st.markdown("*Exemplars: Erling Haaland (Dortmund), Robert Lewandowski (Bayern Munich), Karime Benzema (Real Madrid), Javier (Chico) Hernández (LA Galaxy)*, Jonathan David (Lille)")
+    st.markdown(" Traditional forwards, and the least common role; dangerous finishers close to goal, but tend to contribute mainly at the end of chains of possession, either \
+    through their dangerous shooting or by turning the ball over. More effective dribblers, and are thus more likely to be fouled in dangerous areas. Don't touch or pass the ball much, relative to \
+        their teammates.")
+    st.subheader(f'Cluster 2- {find_cluster_size(df_player, 2):.1f}% of players')
+    st.markdown("*Exemplars: Lorenzo Insigne (Napoli), Kevin De Bruyne (Manchester City), Kylian Mbappé (Paris S-G), Thomas Müller (Bayern Munich),  Alejandro Pozuelo (Inter Miami)*")
+    st.markdown("Traditional attacking midfielders and wingers; this player is adept at creating goal-scoring opportunities, either by dribbling or passing into the opposing team's penalty area. \
+        They tend to play shorter passes (perhaps because they are mostly found in the final third), and do not contribute as much defensively.")
+    st.subheader(f'Cluster 3- {find_cluster_size(df_player, 3):.1f}% of players')
+    st.markdown("*Exemplars: Raphina (Leeds United), Luka Modrić (Real Madrid), Sergio Busquets (Barcelona), Joshua Kimmich (Bayern Munich), Marten de Roon (Atalanta)* ")
+    st.markdown("This player tends to control the midfield, both offensively and defensively. They possess the ball more than any other \
+    player profile, and are accurate passers. They are skilled at dispossessing opposing players, mostly in the midfield. ")
+    st.subheader(f'Cluster 4- {find_cluster_size(df_player, 4):.1f}% of players')
+    st.markdown("*Exemplars: Alphonso Davies (Bayern Munich), Trent Alexander-Arnold (Liverpool), João Cancelo (Manchester City), Kai Wagner (Philadelphia Union)*")
+    st.markdown("Traditional fullbacks and wide midfielders. Players who look to make long, progressive passes from deep or central areas. Also effective at dispossessing players in the \
+    defensive third. Much more likely to take throw-ins, confirming the wider roles they play.")
+    st.subheader(f'Cluster 5- {find_cluster_size(df_player, 5):.1f}% of players')
+    st.markdown("*Exemplars: Virgil van Dijk (Liverpool),  Matthijs de Ligt (Juventus), Lewis Dunk (Brighton), Pau Torres (Villareal), Gerard Piqué (Barcelona)*") 
+    st.markdown("Traditional centre-backs. More likely to possess the ball in their own 3rd of the pitch, and therefore more likely to make accurate, longer passes (*i.e.* greater than 10 yards). \
+        They are hard to dispossess and will win most balls on the ground and in the air.")
 
-col1, col2, col3 = st.columns([1,6,1])
-with col1:
-    st.write("")
-with col2:
-    cluster_map = Image.open("reports/figures/cluster_map_opta_annotated.png")
-    st.image(cluster_map )
-with col3:
-    st.write("")
+    st.subheader('Details of the Methodology')
+    st.markdown('The play styles were determined by taking around 50 event-based statistical actions collected by [Opta](https://www.statsperform.com/opta/), and reducing those actions to a 2-dimensional\
+        graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
+        clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). The resulting graph, along \
+        with an interpretation of the axes, is shown below.')
+    st.markdown("\'*Position*' is the position on the pitch where most of that player's actions take place. \'*Skill in possession*\' is how good they are with the ball at their feet, \
+        whether passing , dribbling or holding on to the ball. ")
+
+    col1, col2, col3 = st.columns([1,6,1])
+    with col1:
+        st.write("")
+    with col2:
+        cluster_map = Image.open("reports/figures/cluster_map_opta_annotated.png")
+        st.image(cluster_map )
+    with col3:
+        st.write("")
