@@ -1,4 +1,4 @@
-Clustering Professional Soccer Players by Play Style- LHL Final Project
+Clustering Professional Soccer Players by Play Style
 =======================================================================
 
 An attempt to compare similar players and playing styles using event-based data in 10 professional soccer leagues. There were two goals:
@@ -7,7 +7,7 @@ An attempt to compare similar players and playing styles using event-based data 
 
 2. Create clusters (groups) of players who play with a similar play-style, and identify that play-style in an intuitive way.
 
-Data was gathered from a football statistics website and various unsupervised learning algorithms were used to create the clusters of players with similar statistical profiles. Also created a [Streamlit web application](https://marcjbaron-soccer-scouting-streamlit-app-n4gmux.streamlit.app/) which allows you to search for a specific player within the included leagues to find players who are similar to that given player (for now).
+Data was gathered from a football statistics website and various unsupervised learning algorithms were used to create the clusters of players with similar statistical profiles. Also created a [Streamlit web application](https://marcjbaron-soccer-scouting-streamlit-app-n4gmux.streamlit.app/) which allows you to search for a player in the included leagues and find players who are similar to that player. 
 
 The project is similar in scope to [The Athletic's player roles](https://theathletic.com/3473297/2022/08/10/player-roles-the-athletic/), which also used 
 similar techniques. 
@@ -23,7 +23,7 @@ The final clusters looked like the following:
 
 The clusters are, for the most part, delineated into the most common location of that player on the pitch:
 
-![Player cluster map](https://github.com/marcjbaron/soccer_scouting/blob/main/reports/figures/clusters_pitch.png "Explanatory purposes only; this wasn't determined through any analysis")
+![Player cluster map](https://github.com/marcjbaron/soccer_scouting/blob/main/reports/figures/clusters_pitch.png "Explanatory purposes only; this wasn't determined through analysis")
 
 
 With a different dataset that included player pressing data, there were small changes to the shape of the clusters, and more clusters were identified:

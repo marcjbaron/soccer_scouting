@@ -94,19 +94,20 @@ st.sidebar.text('')
 
 # League selection
 ###  Selecting leagues
-with st.form(key='selectbox_league'):
-    with st.sidebar:
-        unique_leagues = get_unique_leagues(df_player)
-        all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, check the box below and \
-            then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
-        if (all_leagues_selected == 'Select leagues manually (choose below)'):
-            selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can \
-                clear the current selection by clicking the corresponding x-button on the right", unique_leagues, default = unique_leagues)
-        df_data_filtered = filter_leagues(df_player)   
+### Keep for future development;  would need to run this filtered analysis within app 
+# with st.form(key='selectbox_league'):
+#     with st.sidebar:
+#         unique_leagues = get_unique_leagues(df_player)
+#         all_leagues_selected = st.sidebar.selectbox('Do you want to only include specific leagues? If so, check the box below and \
+#             then select the league(s) in the new field.', ['Include all available leagues','Select leagues manually (choose below)'])
+#         if (all_leagues_selected == 'Select leagues manually (choose below)'):
+#             selected_leagues = st.sidebar.multiselect("Select and deselect the leagues you would like to include in the analysis. You can \
+#                 clear the current selection by clicking the corresponding x-button on the right", unique_leagues, default = unique_leagues)
+#         df_data_filtered = filter_leagues(df_player)   
 
 with st.form(key='selectbox_form'):
     with st.sidebar:
-        unique_leagues = get_unique_leagues(df_data_filtered)
+        unique_leagues = get_unique_leagues(df_player)
         prompts = [["Select a league"], ["Select a team"], ["Select a player"]]
         prompts[0].extend(unique_leagues)
         league_selection = st.sidebar.selectbox('To choose a player, use the options below to select a league, team and then player. At the moment, only the 2021-2022 season \
@@ -134,7 +135,7 @@ with st.form(key='selectbox_form'):
 with st.form(key='text_form', clear_on_submit=False):
     with st.sidebar:
         player_selection_text = st.sidebar.text_input('Or type the name of a player below. We\'ve randomly selected a player so you can\
-             see how it works. If a player played for multiple teams in that season, only one of the teams will listed', value = st.session_state.player) 
+             see how it works. If a player played for multiple teams in that season, only one of the teams will be listed', value = st.session_state.player) 
         
         # def new_random_player(df):
             # st.session_state["random_player"] = df.Player.sample().values[0]
