@@ -1,57 +1,45 @@
-Professional Soccer Scouting - LHL Final Project
-==============================
+Clustering Professional Soccer Players by Play Style- LHL Final Project
+=======================================================================
 
-An attempt to compare similar player and playing styles using event-based data in the Big 5 European professional soccer leagues (English Premier League, La Liga, Bundesliga, Ligue 1, Serie A), MLS and the CPL.
+An attempt to compare similar players and playing styles using event-based data in 10 professional soccer leagues. There were two goals:
 
-Project Organization
-------------
+1. Given a selected player, find a list of players who are most similar in terms of play-style (as determined by the gathered statistics).
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+2. Create clusters (groups) of players who play with a similar play-style, and identify that play-style in an intuitive way.
+
+Data was gathered from a football statistics website and various unsupervised learning algorithms were used to create the clusters of players with similar statistical profiles. Also created a [Streamlit web application](https://marcjbaron-soccer-scouting-streamlit-app-n4gmux.streamlit.app/) which allows you to search for a specific player within the included leagues to find players who are similar to that given player (for now).
+
+The project is similar in scope to [The Athletic's player roles](https://theathletic.com/3473297/2022/08/10/player-roles-the-athletic/), which also used 
+similar techniques. 
 
 
---------
+This project was initially built as the final project in the Data Science bootcamp at Lighthouse Labs.
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+## Results
+
+The final clusters looked like the following:
+
+[Clusters without pressing data](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/cluster_map_opta_annotated.png)
+
+The clusters are, for the most part, delineated into the most common location of that player on the pitch:
+
+[Player cluster map](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/clusters_pitch.png "Explanatory purposes only; this wasn't determined through any analysis")
+
+
+With a different dataset that included player pressing data, there were small changes to the shape of the clusters, and more clusters were identified:
+
+[Clusters with pressing data](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/cluster_map_annotated_sb.png)
+
+The final clusters were determined by taking around 50 event-based statistical actions and reducing those actions to a 2-dimensional graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
+clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). Other techniques were considered, but these gave (i) the best scores on various clustering metrics (Silhouette Score, Davies-Boulding Score, Calinsko-Harabasz), and (ii) gave intuitive results that could be related to knowledge of what a player actually does on the pitch. 
+
+
+## Future Work
+
+* Use player tracking data to see where actions are taken on the pitch to see if there are finer-grained clusters that can be found (*e.g.* a player who makes a majority of their on-ball actions in one area of the pitch, but a majority of their defensive actions take place elsewhere).
+* Create initial clusters based on location-based statistics only, then cluster again based on locationless events 
+* Add player contract information 
+
+
+
+
