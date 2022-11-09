@@ -19,16 +19,16 @@ This project was initially built as the final project in the Data Science bootca
 
 The final clusters looked like the following:
 
-![Clusters without pressing data](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/cluster_map_opta_annotated.png)
+![Clusters without pressing data](https://github.com/marcjbaron/soccer_scouting/blob/main/reports/figures/cluster_map_opta_annotated.png)
 
 The clusters are, for the most part, delineated into the most common location of that player on the pitch:
 
-![Player cluster map](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/clusters_pitch.png "Explanatory purposes only; this wasn't determined through any analysis")
+![Player cluster map](https://github.com/marcjbaron/soccer_scouting/blob/main/reports/figures/clusters_pitch.png "Explanatory purposes only; this wasn't determined through any analysis")
 
 
 With a different dataset that included player pressing data, there were small changes to the shape of the clusters, and more clusters were identified:
 
-![Clusters with pressing data](https://github.com/marcjbaron/soccer_scouting/tree/main/reports/figures/cluster_map_annotated_sb.png)
+![Clusters with pressing data](https://github.com/marcjbaron/soccer_scouting/blob/main/reports/figures/cluster_map_annotated_sb.png)
 
 The final clusters were determined by taking around 50 event-based statistical actions and reducing those actions to a 2-dimensional graph using a technique called [UMAP](https://umap-learn.readthedocs.io/en/latest/clustering.html). The resulting data was then organized into\
 clusters using a technique called [spectral clustering](https://www.kaggle.com/code/vipulgandhi/spectral-clustering-detailed-explanation). Other techniques were considered, but these gave (i) the best scores on various clustering metrics (Silhouette Score, Davies-Boulding Score, Calinsko-Harabasz), and (ii) gave intuitive results that could be related to knowledge of what a player actually does on the pitch. 
