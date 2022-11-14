@@ -1,11 +1,5 @@
-# FBRef Datacollection
-# Marc Baron
 
-
-###!!! NOTE: In October 2022, FBRef changed their data-provider from StatsBomb to Opta. 
-# expanded the scope of their statistics coverage, but some statistics were lost in the process. 
-# Running this file will collect the new Opta data; the StatsBomb data is saved and labelled in 
-# the data folder
+# URL changed for data usage reasons
 
 import requests
 import pandas as pd
@@ -14,13 +8,15 @@ import pandas as pd
 #### Function Definitions ####
 
 def get_dataframe(league, stat, year):
-  '''Store data FBRef data into Pandas dataframe for a specific category of statistic.
+  '''Store data soccerstats data into Pandas dataframe for a specific category of statistic.
   Parameters:
     stat: the specific category of statistic 
       - Options: shooting, passing, passing_types, gca, defense, possession, playingtime, misc
 
     league: 
       - options: Big5, La-Liga, Premier-League, Ligue-1, Bundesliga, Serie-A, Major-League-Soccer
+      Liga MX, EFL Championship, Eredivisie, Primeira Liga (Portugal)
+
     
     year: 
       - should be over 2 years for the big 5 leagues, and a single year for MLS; if chosen over 2 years,
@@ -29,16 +25,16 @@ def get_dataframe(league, stat, year):
 
       ***Advanced data only available after 2017-2018
   Return:
-    df: Dataframe containing table of stats from the given FBRef page
+    df: Dataframe containing table of stats from the given soccerstats page
   '''
 
   #Leagues have specific number codes in URL; add that code if user wants specific league
   if (league == 'Big-5-European-Leagues'):
     league_num = 'Big5' 
     # Big 5 stats have a different URL to individual leagues
-    url = f'https://fbref.com/en/comps/{league_num}/{year}/{stat}/players/{year}-{league}-Stats'
+    url = f'https://soccerstats.com/en/comps/{league_num}/{year}/{stat}/players/{year}-{league}-Stats'
     if (year == 'current'):
-      url = f'https://fbref.com/en/comps/{league_num}/{stat}/players/{league}-Stats'
+      url = f'https://soccerstats.com/en/comps/{league_num}/{stat}/players/{league}-Stats'
   else:
     if (league == 'La-Liga'):
       league_num = '12'
@@ -50,6 +46,14 @@ def get_dataframe(league, stat, year):
       league_num = '20'
     if (league == 'Serie-A'):
       league_num = '11'
+    if (league == 'Eredivisie'):
+      league_num = '23'
+    if (league == 'Primeira-Liga'):
+      league_num = '32'
+    if (league == 'Championship'):
+      league_num = '10'
+    if (league == 'Liga-MX'):
+      league_num = '31'
     if (league == 'Major-League-Soccer'):
       if (year != 'current'):
         year = year.split('-')[1] # MLS takes place in a single calendar year
@@ -57,10 +61,10 @@ def get_dataframe(league, stat, year):
     else:
       print('League not found')
   
-    url = f'https://fbref.com/en/comps/{league_num}/{year}/{stat}/{year}-{league}-Stats'
+    url = f'https://soccerstats.com/en/comps/{league_num}/{year}/{stat}/{year}-{league}-Stats'
     
     if (year == 'current'): #MLS page redirects to this page for current season
-      url = f'https://fbref.com/en/comps/{league_num}/{stat}/{league}-Stats'
+      url = f'https://soccerstats.com/en/comps/{league_num}/{stat}/{league}-Stats'
 
     html_content = requests.get(url).text.replace('<!--', '').replace('-->', '')
     list_df = pd.read_html(html_content)
