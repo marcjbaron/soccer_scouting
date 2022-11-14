@@ -23,7 +23,11 @@ See the *Environment_Instructions.txt* file for details about how to set-up your
 
 * Data clean-up happens with the file *src/features/build_features*. Exploration of this data-set happens in *notebooks/Data_Exploration_and_Normalization.ipynb* 
 
-* Use Sci-kit learn standardizers in *src/features/transform_features.py*; last 
+* Use Sci-kit learn standardizers in *src/features/transform_features.py*
+
+* Exploration of different dimensionality reduction algorithms (including final model) in *notebooks/PtII-Dimensionality_reduction.ipynb*
+
+* Analysis of different clustering algorithms in *notebooks/PtIII-Cluster_analysis.ipynb*
 
 ## Results
 
