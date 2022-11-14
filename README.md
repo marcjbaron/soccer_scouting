@@ -15,6 +15,16 @@ similar techniques.
 
 This project was initially built as the final project in the Data Science bootcamp at Lighthouse Labs.
 
+## Using this repo
+
+See the *Environment_Instructions.txt* file for details about how to set-up your environent. 
+
+* Collect the data from the website with the file *src/data/collect_data.py*. (*The urls have been changed due to data usage reasons*)
+
+* Data clean-up happens with the file *src/features/build_features*. Exploration of this data-set happens in *notebooks/Data_Exploration_and_Normalization.ipynb* 
+
+* Use Sci-kit learn standardizers in *src/features/transform_features.py*; last 
+
 ## Results
 
 The final clusters looked like the following:
